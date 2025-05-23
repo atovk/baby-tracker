@@ -1,0 +1,62 @@
+[project]
+name = "baby-tracker"
+version = "0.1.0"
+description = "A comprehensive baby feeding and growth tracking application"
+authors = [
+    {name = "atovk", email = "neatovk@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.12.0",
+    "pydantic>=2.0.0",
+    "pandas>=2.0.0",
+    "python-dateutil>=2.8.0",
+    "typing-extensions>=4.8.0",
+    "dataclasses>=0.8",
+]
+
+[project.optional-dependencies]
+export = [
+    "openpyxl>=3.1.0",
+    "reportlab>=4.0.0"
+]
+analytics = [
+    "matplotlib>=3.7.0",
+    "plotly>=5.15.0"
+]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "mypy>=1.5.0",
+]
+
+[tool.poetry]
+packages = [{include = "baby_tracker", from = "src"}]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
