@@ -1,10 +1,56 @@
 # 宝宝喂养与成长追踪器 (Baby Feeding and Growth Tracker)
 
-## 一、核心理念 (Core Philosophy)
+## 一、项目概述 (Project Overview)
+
+这是一个使用现代化架构的宝宝成长与喂养追踪器应用，帮助父母记录和分析宝宝的喂养、健康与成长数据。项目采用领域驱动设计(DDD)分层架构，使用 SQLAlchemy + Alembic 实现持久化框架，以及 dataclasses 库实现数据传输对象(DTO)。
+
+### 核心理念 (Core Philosophy)
 
 简洁易用，全面记录宝宝的喂养、健康与成长点滴，辅助父母科学育儿。
 
-## 二、主要功能模块 (Main Feature Modules)
+## 二、技术架构 (Technical Architecture)
+
+### 1. 分层设计 (Layered Architecture)
+
+项目采用领域驱动设计(DDD)的分层架构，主要包括以下几层：
+
+1. **数据层 (Data Layer)**
+   - SQLAlchemy ORM 模型
+   - Alembic 数据库迁移
+   - 数据库连接和会话管理
+
+2. **DTO 层 (Data Transfer Object Layer)**
+   - 使用 Python dataclasses 实现
+   - 用于在不同层之间传输数据
+   - 加强类型安全和代码可读性
+
+3. **映射层 (Mapping Layer)**
+   - 在 SQLAlchemy 模型和 DTO 之间转换数据
+   - 实现数据格式和结构的转换逻辑
+
+4. **仓储层 (Repository Layer)**
+   - 实现仓储模式 (Repository Pattern)
+   - 封装对数据源的访问
+   - 提供统一的数据访问接口
+
+5. **服务层 (Service Layer)**
+   - 实现业务逻辑
+   - 协调多个仓储的操作
+   - 提供高级功能和数据分析
+
+6. **API 层/UI 层 (API/UI Layer)**
+   - 提供对外接口或用户界面
+   - 处理用户输入和展示结果
+
+### 2. 核心技术 (Core Technologies)
+
+- **Python**: 主要编程语言
+- **SQLAlchemy**: ORM 框架
+- **Alembic**: 数据库迁移工具
+- **Dataclasses**: 数据传输对象实现
+- **SQLite**: 数据存储
+
+## 三、主要功能模块 (Main Feature Modules)
 
 ### 1. 喂养记录 (Feeding Log)
 
@@ -358,12 +404,209 @@
         - **清除数据**: 清除特定宝宝数据或所有数据 (需二次确认)。
      4. **关于与帮助**: 应用版本信息、用户协议、隐私政策、帮助文档、反馈渠道。
 
-## 三、非功能性需求 (Non-Functional Requirements) - *新增建议*
+## 四、数据结构设计 (Data Structure Design)
 
-- **易用性 (Usability)**: 界面简洁直观，交互逻辑清晰，操作便捷，新手父母也能快速上手并高效记录。减少不必要的点击和输入。
-- **可靠性 (Reliability)**: 数据记录准确无误，云同步稳定可靠，应用崩溃率低，确保用户数据不丢失。
-- **隐私性 (Privacy)**: 严格遵守数据保护法规，明确告知用户数据用途，对敏感信息进行加密处理，确保用户及宝宝的个人信息安全。
-- **性能 (Performance)**: 应用启动快速，数据加载和切换流畅，长时间使用不卡顿，不异常消耗电量。
-- **可访问性 (Accessibility)**: 考虑不同用户的需求，如提供足够的色彩对比度、可调整字体大小等。
-- **可扩展性 (Scalability/Extensibility)**: 软件架构设计良好，方便未来根据用户反馈和需求迭代，添加新功能和模块。
-- **安全性 (Security)**: 防止未经授权的访问和数据泄露，特别是涉及云同步和账户管理时。
+### 主要数据模型
+
+1. **宝宝模型 (Baby)**
+   - 基本信息：姓名、生日、性别等
+
+2. **喂养模型 (Feeding)**
+   - 母乳喂养 (Nursing)：时间、持续时间、左右侧时间等
+   - 配方奶喂养 (Formula)：时间、数量等
+
+3. **健康模型 (Health)**
+   - 睡眠 (Sleep)：时间、持续时间等
+   - 尿布 (Diaper)：时间、类型等
+   - 体重 (Weight)：时间、重量等
+   - 身高 (Height)：时间、身高等
+   - 头围 (Head)：时间、围度等
+   - 体温 (Temperature)：时间、温度、测量位置等
+
+4. **活动模型 (Activity)**
+   - 游戏时间 (Playtime)：时间、持续时间、类型等
+   - 洗澡 (Bath)：时间、持续时间、水温等
+   - 照片 (Photo)：时间、文件路径、描述等
+   - 视频 (Video)：时间、文件路径、持续时间、描述等
+
+## 五、安装与设置 (Installation & Setup)
+
+### 环境要求 (Requirements)
+
+- Python 3.8+
+- SQLite 3.0+
+
+### 安装步骤 (Installation Steps)
+
+1. 克隆项目仓库：
+
+   ```bash
+   git clone https://github.com/yourusername/baby-tracker.git
+   cd baby-tracker
+   ```
+
+2. 安装依赖：
+
+   ```bash
+   pip install -e .
+   ```
+
+   或者使用 pip 直接安装依赖：
+
+   ```bash
+   pip install sqlalchemy alembic
+   ```
+
+3. 初始化数据库：
+
+   ```bash
+   alembic upgrade head
+   ```
+
+## 六、使用示例 (Usage Examples)
+
+### 基本使用 (Basic Usage)
+
+1. **创建宝宝记录**：
+
+   ```python
+   from baby_tracker.services import BabyService
+   from baby_tracker.models.dto import BabyDTO, Gender
+   
+   # 创建宝宝服务
+   baby_service = BabyService()
+   
+   # 创建宝宝记录
+   baby = BabyDTO(
+       name="小明",
+       dob=1714986000.0,  # 2024-05-06的时间戳
+       gender=Gender.MALE
+   )
+   
+   # 保存宝宝记录
+   saved_baby = baby_service.create_baby(baby)
+   print(f"创建的宝宝ID: {saved_baby.id}")
+   ```
+
+2. **添加喂养记录**：
+
+   ```python
+   from baby_tracker.services import FeedingService
+   
+   # 创建喂养服务
+   feeding_service = FeedingService()
+   
+   # 记录母乳喂养
+   feeding_service.add_nursing(
+       baby_id=baby_id,
+       left_duration=10,  # 左侧喂养10分钟
+       right_duration=8,  # 右侧喂养8分钟
+       note="宝宝吃得很好"
+   )
+   
+   # 记录配方奶喂养
+   feeding_service.add_formula(
+       baby_id=baby_id,
+       amount=120.0,  # 120ml
+       note="使用新购买的奶粉"
+   )
+   ```
+
+3. **添加健康记录**：
+
+   ```python
+   from baby_tracker.services import HealthService
+   
+   # 创建健康服务
+   health_service = HealthService()
+   
+   # 记录体重
+   health_service.add_weight_record(
+       baby_id=baby_id,
+       weight=3850.0,  # 3850克
+       note="满月体检"
+   )
+   
+   # 记录体温
+   health_service.add_temperature_record(
+       baby_id=baby_id,
+       temperature=36.5,  # 36.5°C
+       location="腋下"
+   )
+   ```
+
+4. **生成分析报告**：
+
+   ```python
+   
+   from baby_tracker.services import AnalyticsService
+   
+   # 创建分析服务
+   analytics_service = AnalyticsService()
+   
+   # 获取喂养分析
+   feeding_analysis = analytics_service.analyze_feeding(
+       baby_id=baby_id,
+       days=7  # 分析最近7天的数据
+   )
+   
+   print(f"平均每日喂养次数: {feeding_analysis.avg_daily_feedings}")
+   print(f"总喂养量: {feeding_analysis.total_formula_amount}ml")
+   ```
+
+### 高级功能 (Advanced Features)
+
+1. **导出数据**：
+
+   ```python
+   
+   from baby_tracker.services import ExportService, ExportRequest
+   from datetime import datetime, timedelta
+   
+   # 创建导出服务
+   export_service = ExportService()
+   
+   # 定义导出请求
+   export_req = ExportRequest(
+       baby_id=baby_id,
+       start_date=datetime.now() - timedelta(days=30),
+       end_date=datetime.now(),
+       format="excel",
+       include_feeding=True,
+       include_health=True,
+       include_activity=True
+   )
+   
+   # 导出数据
+   result = export_service.export_data(export_req)
+   print(f"数据已导出到: {result.file_path}")
+   ```
+
+2. **数据迁移**：
+
+   ```bash
+   # 从旧数据库迁移数据到新数据库
+   python tools/data_migrator.py --old-db data/old_db.sqlite --new-db sqlite:///data/new_db.sqlite
+   ```
+
+## 七、项目贡献 (Contributing)
+
+欢迎贡献代码、报告问题或提出新功能建议！请按照以下步骤参与项目：
+
+1. Fork 项目仓库
+2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m 'Add some amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 创建 Pull Request
+
+## 八、许可证 (License)
+
+本项目采用 MIT 许可证 - 详情请参见 [LICENSE.md](LICENSE.md) 文件。
+
+## 九、联系方式 (Contact)
+
+Project Link: [https://github.com/yourusername/baby-tracker](https://github.com/yourusername/baby-tracker)
+
+---
+
+*本项目正在开发中，持续增加新功能和改进现有功能。*

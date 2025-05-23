@@ -1,52 +1,65 @@
 """
-基础模型类
+基础模型类 - 使用 dataclasses 重构
 """
+from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Dict, Any
 from sqlalchemy import Column, String, Float, Integer, Text, Boolean
 from sqlalchemy.ext.declarative import declared_attr
 from baby_tracker.database import Base
 import uuid
 
 
+@dataclass
 class TimestampMixin:
     """时间戳混入类"""
     
+    timestamp: float = field(default_factory=lambda: datetime.now().timestamp())
+    
     @declared_attr
-    def timestamp(cls):
-        """记录创建或更新时间戳"""
+    def timestamp_column(cls):
+        """记录创建或更新时间戳的SQLAlchemy列"""
         return Column(Float, default=lambda: datetime.now().timestamp())
 
 
+@dataclass
 class BaseModel(Base, TimestampMixin):
-    """基础模型类"""
+    """基础模型类 - 使用 dataclasses"""
     
     __abstract__ = True
     
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    
     @declared_attr
-    def id(cls):
-        """主键ID"""
+    def id_column(cls):
+        """主键ID的SQLAlchemy列"""
         return Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, Any]:
         """转换为字典"""
         result = {}
-        for column in self.__table__.columns:
-            value = getattr(self, column.name)
+        for field_name in self.__dataclass_fields__.keys():
+            value = getattr(self, field_name)
             if isinstance(value, datetime):
                 value = value.timestamp()
-            result[column.name] = value
+            result[field_name] = value
         return result
     
     @classmethod
-    def from_dict(cls, data: dict):
+    def from_dict(cls, data: Dict[str, Any]):
         """从字典创建实例"""
         # 过滤掉不存在的字段
         valid_data = {}
         for key, value in data.items():
-            if hasattr(cls, key):
+            if key in cls.__dataclass_fields__:
                 valid_data[key] = value
         return cls(**valid_data)
+    
+    def update_from_dict(self, data: Dict[str, Any]) -> None:
+        """从字典更新实例"""
+        for key, value in data.items():
+            if key in self.__dataclass_fields__ and hasattr(self, key):
+                setattr(self, key, value)
 
 
 class ActivityMixin:

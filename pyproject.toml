@@ -6,7 +6,7 @@ authors = [
     {name = "atovk", email = "neatovk@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.10"
 dependencies = [
     "sqlalchemy>=2.0.0",
     "alembic>=1.12.0",
@@ -14,7 +14,6 @@ dependencies = [
     "pandas>=2.0.0",
     "python-dateutil>=2.8.0",
     "typing-extensions>=4.8.0",
-    "dataclasses>=0.8",
 ]
 
 [project.optional-dependencies]
